@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="FingerDice.Pages.WinnerPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:models="clr-namespace:FingerDice.Models"
+    xmlns:pageModel="clr-namespace:FingerDice.PageModels"
+    xmlns:sf="clr-namespace:Syncfusion.Maui.Toolkit.TextInputLayout;assembly=Syncfusion.Maui.Toolkit"
+    Title="Task"
+    x:DataType="pageModel:WinnerPageModel">
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem
+            Command="{Binding DeleteCommand}"
+            IconImageSource="{StaticResource IconDelete}"
+            Order="Primary"
+            Priority="0"
+            Text="Delete" />
+    </ContentPage.ToolbarItems>
+
+    <Grid>
+        <ScrollView>
+            <VerticalStackLayout Padding="{StaticResource LayoutPadding}" Spacing="{StaticResource LayoutSpacing}">
+                <sf:SfTextInputLayout Hint="Task">
+                    <Entry Text="{Binding Title}" />
+                </sf:SfTextInputLayout>
+
+                <sf:SfTextInputLayout Hint="Completed">
+                    <CheckBox HorizontalOptions="End" IsChecked="{Binding IsCompleted}" />
+                </sf:SfTextInputLayout>
+
+                <sf:SfTextInputLayout Hint="Project" IsVisible="{Binding IsExistingProject}">
+                    <Picker
+                        ItemDisplayBinding="{Binding Name, x:DataType=models:Project}"
+                        ItemsSource="{Binding Projects}"
+                        SelectedIndex="{Binding SelectedProjectIndex}"
+                        SelectedItem="{Binding Project}" />
+                </sf:SfTextInputLayout>
+
+                <Button
+                    Command="{Binding SaveCommand}"
+                    HeightRequest="{OnIdiom 44,
+                                            Desktop=60}"
+                    Text="Save" />
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
+</ContentPage>
