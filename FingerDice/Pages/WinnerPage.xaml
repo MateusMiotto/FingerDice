@@ -3,46 +3,29 @@
     x:Class="FingerDice.Pages.WinnerPage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:models="clr-namespace:FingerDice.Models"
-    xmlns:pageModel="clr-namespace:FingerDice.PageModels"
-    xmlns:sf="clr-namespace:Syncfusion.Maui.Toolkit.TextInputLayout;assembly=Syncfusion.Maui.Toolkit"
-    Title="Task"
-    x:DataType="pageModel:WinnerPageModel">
+    xmlns:f="clr-namespace:Fonts"
+    xmlns:handler="clr-namespace:FingerDice.Utilities.Handlers"
+    Title="Vencedor"
+    BackgroundColor="White">
 
-    <ContentPage.ToolbarItems>
-        <ToolbarItem
-            Command="{Binding DeleteCommand}"
-            IconImageSource="{StaticResource IconDelete}"
-            Order="Primary"
-            Priority="0"
-            Text="Delete" />
-    </ContentPage.ToolbarItems>
+    <AbsoluteLayout x:Name="MainLayout">
+        <Label
+            x:Name="CountdownLabel"
+            AbsoluteLayout.LayoutBounds="0.5,0.5,-1,-1"
+            AbsoluteLayout.LayoutFlags="PositionProportional"
+            FontSize="300"
+            HorizontalTextAlignment="Center"
+            IsVisible="False"
+            Text=""
+            TextColor="{AppThemeBinding Dark={StaticResource White}, Light={StaticResource Black}}"
+            VerticalTextAlignment="Center" />
 
-    <Grid>
-        <ScrollView>
-            <VerticalStackLayout Padding="{StaticResource LayoutPadding}" Spacing="{StaticResource LayoutSpacing}">
-                <sf:SfTextInputLayout Hint="Task">
-                    <Entry Text="{Binding Title}" />
-                </sf:SfTextInputLayout>
-
-                <sf:SfTextInputLayout Hint="Completed">
-                    <CheckBox HorizontalOptions="End" IsChecked="{Binding IsCompleted}" />
-                </sf:SfTextInputLayout>
-
-                <sf:SfTextInputLayout Hint="Project" IsVisible="{Binding IsExistingProject}">
-                    <Picker
-                        ItemDisplayBinding="{Binding Name, x:DataType=models:Project}"
-                        ItemsSource="{Binding Projects}"
-                        SelectedIndex="{Binding SelectedProjectIndex}"
-                        SelectedItem="{Binding Project}" />
-                </sf:SfTextInputLayout>
-
-                <Button
-                    Command="{Binding SaveCommand}"
-                    HeightRequest="{OnIdiom 44,
-                                            Desktop=60}"
-                    Text="Save" />
-            </VerticalStackLayout>
-        </ScrollView>
-    </Grid>
+        <handler:TouchSurface
+            x:Name="TouchLayer"
+            AbsoluteLayout.LayoutBounds="0,0,1,1"
+            AbsoluteLayout.LayoutFlags="All"
+            Background="Transparent"
+            InputTransparent="False"
+            ZIndex="1" />
+    </AbsoluteLayout>
 </ContentPage>
