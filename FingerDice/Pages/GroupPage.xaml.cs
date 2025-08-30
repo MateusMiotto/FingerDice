@@ -34,7 +34,11 @@ namespace FingerDice.Pages
 
             TouchLayer.Pressed += (id, p) =>
             {
-                if (_finalized) { ClearPins(); _finalized = false; }
+                if (_finalized)
+                {
+                    ClearPins();
+                    _finalized = false;
+                }
 
                 var pin = NewPin();
                 AbsoluteLayout.SetLayoutBounds(pin, new Rect(p.X - 40, p.Y - 40, 80, 80));
@@ -43,7 +47,9 @@ namespace FingerDice.Pages
                 _pins.Add(pin);
                 _touchPins[id] = pin;
 
-                if (!_running) _ = StartCountdownAsync(5);
+                // Só inicia o contador se não estiver rodando e não estiver finalizado
+                if (!_running && !_finalized)
+                    _ = StartCountdownAsync(5);
             };
 
             TouchLayer.Moved += (id, p) =>
@@ -54,6 +60,12 @@ namespace FingerDice.Pages
 
             TouchLayer.Released += id =>
             {
+                if (_finalized)
+                {
+                    _touchPins.Remove(id); // Apenas remove o vínculo do toque
+                    return;
+                }
+
                 if (_touchPins.TryGetValue(id, out var v))
                 {
                     if (_animNames.TryGetValue(v, out var anim)) this.AbortAnimation(anim);
@@ -61,7 +73,8 @@ namespace FingerDice.Pages
                     _pins.Remove(v);
                     _touchPins.Remove(id);
                 }
-                if (_pins.Count == 0 && _running)
+
+                if (_pins.Count == 0 && _running && !_finalized)
                 {
                     _cts?.Cancel();
                     _running = false;
@@ -94,14 +107,21 @@ namespace FingerDice.Pages
 
         GraphicsView NewPin()
         {
-            var (c1, c2) = _palettes[_paletteIdx++ % _palettes.Length];
+            // Gera gradientes mais distintos usando espaçamento maior no hue
+            double hueStep = 1.0 / Math.Max(6, _groupCount * 2); // Mais espaçado
+            double hue = (_paletteIdx * hueStep) % 1.0;
+            var c1 = Color.FromHsla(hue, 0.9, 0.5);
+            var c2 = Color.FromHsla((hue + 0.15) % 1.0, 0.9, 0.5);
+
+            _paletteIdx++;
+
             var drawable = new GradientCircleDrawable(c1, c2);
 
             var gv = new GraphicsView
             {
                 Drawable = drawable,
-                WidthRequest = 80,
-                HeightRequest = 80,
+                WidthRequest = 140,
+                HeightRequest = 140,
                 InputTransparent = true,
                 BackgroundColor = Colors.Transparent,
                 ZIndex = 2
@@ -128,6 +148,7 @@ namespace FingerDice.Pages
             {
                 for (int s = seconds; s >= 1; s--)
                 {
+                    CountdownLabel.IsVisible = true;
                     CountdownLabel.Text = s.ToString();
                     await Task.Delay(1000, ct);
                 }
@@ -146,11 +167,6 @@ namespace FingerDice.Pages
                 _ = Task.Run(async () =>
                 {
                     await Task.Delay(1000);
-                    MainThread.BeginInvokeOnMainThread(() =>
-                    {
-                        CountdownLabel.IsVisible = false;
-                        CountdownLabel.Text = "";
-                    });
                 });
                 _running = false;
                 _cts = null;
@@ -160,10 +176,19 @@ namespace FingerDice.Pages
         {
             if (_pins.Count == 0) return;
 
-            // gera paleta distinta por grupo via HSLA
-            var colors = Enumerable.Range(0, _groupCount)
-                .Select(i => Color.FromHsla(i / (double)_groupCount, 0.75, 0.5))
-                .ToArray();
+            Color[] colors;
+            if (_groupCount == 2)
+            {
+                // Verde de confirmação e vermelho de atenção
+                colors = new[] { Colors.LimeGreen, Colors.Red };
+            }
+            else
+            {
+                // Paleta dinâmica para mais grupos
+                colors = Enumerable.Range(0, _groupCount)
+                    .Select(i => Color.FromHsla(i / (double)_groupCount, 0.75, 0.5))
+                    .ToArray();
+            }
 
             var rnd = new Random();
             var shuffled = _pins.OrderBy(_ => rnd.Next()).ToList();

@@ -30,6 +30,7 @@ public partial class TouchSurfaceHandler : ViewHandler<TouchSurface, Android.Vie
         var view = VirtualView;
         var ev = e.Event!;
         var action = ev.ActionMasked;
+        var density = v?.Context?.Resources?.DisplayMetrics?.Density ?? 1f;
 
         int index = ev.ActionIndex;
         switch (action)
@@ -38,7 +39,7 @@ public partial class TouchSurfaceHandler : ViewHandler<TouchSurface, Android.Vie
             case MotionEventActions.PointerDown:
                 {
                     var id = ev.GetPointerId(index);
-                    var p = new Point(ev.GetX(index), ev.GetY(index));
+                    var p = new Point(ev.GetX(index) / density, ev.GetY(index) / density);
                     view.OnPressed(id, p);
                     break;
                 }
@@ -47,7 +48,7 @@ public partial class TouchSurfaceHandler : ViewHandler<TouchSurface, Android.Vie
                     for (int i = 0; i < ev.PointerCount; i++)
                     {
                         var id = ev.GetPointerId(i);
-                        var p = new Point(ev.GetX(i), ev.GetY(i));
+                        var p = new Point(ev.GetX(i) / density, ev.GetY(i) / density);
                         view.OnMoved(id, p);
                     }
                     break;

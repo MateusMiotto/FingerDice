@@ -42,7 +42,7 @@
             AbsoluteLayout.LayoutFlags="All"
             Background="Transparent"
             InputTransparent="False"
-            ZIndex="0" />
+            ZIndex="1" />
 
     </AbsoluteLayout>
 </ContentPage>
