@@ -179,21 +179,21 @@ namespace FingerDice.Pages
             Color[] colors;
             if (_groupCount == 2)
             {
-                // Verde de confirmação e vermelho de atenção
                 colors = new[] { Colors.LimeGreen, Colors.Red };
             }
             else
             {
-                // Paleta dinâmica para mais grupos
                 colors = Enumerable.Range(0, _groupCount)
                     .Select(i => Color.FromHsla(i / (double)_groupCount, 0.75, 0.5))
                     .ToArray();
             }
 
-            var rnd = new Random();
+            // Randomização
+            var rnd = new Random(Guid.NewGuid().GetHashCode());
             var shuffled = _pins.OrderBy(_ => rnd.Next()).ToList();
+            shuffled = shuffled.OrderBy(_ => rnd.Next()).ToList();
 
-            // distribuição balanceada por round-robin
+            // distribuição balanceada por round-robin + animação
             for (int i = 0; i < shuffled.Count; i++)
             {
                 var v = shuffled[i];
@@ -208,6 +208,18 @@ namespace FingerDice.Pages
 
                 v.Drawable = new SolidCircleDrawable(finalColor);
                 v.Invalidate();
+
+                // Animação: efeito de "pulsar" ao revelar o grupo
+                v.Scale = 1;
+                v.FadeTo(1, 100);
+                v.ScaleTo(1.3, 200, Easing.CubicOut)
+                    .ContinueWith(_ =>
+                    {
+                        MainThread.BeginInvokeOnMainThread(async () =>
+                        {
+                            await v.ScaleTo(1, 200, Easing.CubicIn);
+                        });
+                    });
             }
             _finalized = true;
         }
@@ -259,19 +271,6 @@ namespace FingerDice.Pages
             }
         }
 
-    }
 
-    public class CircleDrawable : IDrawable
-    {
-        public Color Color { get; set; }
-        public CircleDrawable(Color color) => Color = color;
-
-        public void Draw(ICanvas canvas, RectF r)
-        {
-            canvas.Antialias = true;
-            canvas.StrokeColor = Color;
-            canvas.StrokeSize = 6;
-            canvas.DrawCircle(r.Center.X, r.Center.Y, r.Width / 2 - 3);
-        }
     }
 }
