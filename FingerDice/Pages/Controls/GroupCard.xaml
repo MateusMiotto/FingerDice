@@ -16,7 +16,7 @@
     <VerticalStackLayout>
         <Label
             Style="{StaticResource Title2}"
-            Text="Group"
+            Text="Grupos"
             VerticalOptions="Center" />
 
     </VerticalStackLayout>

@@ -3,12 +3,46 @@
     x:Class="FingerDice.Pages.GroupPage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    Title="Interativo">
+    xmlns:f="clr-namespace:Fonts"
+    xmlns:handler="clr-namespace:FingerDice.Utilities.Handlers"
+    Title="Grupos"
+    BackgroundColor="White">
 
-    <AbsoluteLayout x:Name="MainLayout" BackgroundColor="White">
-        <!--  Círculos serão adicionados dinamicamente  -->
-        <AbsoluteLayout.GestureRecognizers>
-            <TapGestureRecognizer Tapped="OnLayoutTapped" />
-        </AbsoluteLayout.GestureRecognizers>
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Clicked="ToolbarItem_Clicked">
+            <ToolbarItem.IconImageSource>
+                <FontImageSource
+                    FontFamily="{x:Static f:FluentUI.FontFamily}"
+                    Glyph="{x:Static f:FluentUI.settings_20_regular}"
+                    Size="24"
+                    Color="{AppThemeBinding Dark={StaticResource White},
+                                            Light={StaticResource Black}}" />
+            </ToolbarItem.IconImageSource>
+        </ToolbarItem>
+    </ContentPage.ToolbarItems>
+
+    <AbsoluteLayout x:Name="MainLayout">
+
+        <!--  Label central de contagem  -->
+        <Label
+            x:Name="CountdownLabel"
+            AbsoluteLayout.LayoutBounds="0.5,0.5,-1,-1"
+            AbsoluteLayout.LayoutFlags="PositionProportional"
+            FontSize="300"
+            HorizontalTextAlignment="Center"
+            IsVisible="False"
+            Text=""
+            TextColor="{AppThemeBinding Dark={StaticResource White},
+                                        Light={StaticResource Black}}"
+            VerticalTextAlignment="Center" />
+
+        <handler:TouchSurface
+            x:Name="TouchLayer"
+            AbsoluteLayout.LayoutBounds="0,0,1,1"
+            AbsoluteLayout.LayoutFlags="All"
+            Background="Transparent"
+            InputTransparent="False"
+            ZIndex="0" />
+
     </AbsoluteLayout>
 </ContentPage>

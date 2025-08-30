@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Maui;
+using FingerDice.Utilities.Handlers;
 using Microsoft.Extensions.Logging;
 using Syncfusion.Maui.Toolkit.Hosting;
 
@@ -43,6 +44,14 @@ namespace FingerDice
 
             builder.Services.AddTransientWithShellRoute<ProjectDetailPage, ProjectDetailPageModel>("project");
             builder.Services.AddTransientWithShellRoute<TaskDetailPage, TaskDetailPageModel>("task");
+
+
+
+            builder.ConfigureMauiHandlers(h =>
+            {
+                h.AddHandler(typeof(TouchSurface), typeof(TouchSurfaceHandler));
+            });
+
 
             return builder.Build();
         }

@@ -15,7 +15,7 @@
     <VerticalStackLayout>
         <Label
             Style="{StaticResource Title2}"
-            Text="Winner"
+            Text="Ganhador"
             VerticalOptions="Center" />
 
     </VerticalStackLayout>

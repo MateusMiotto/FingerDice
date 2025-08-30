@@ -33,7 +33,18 @@ namespace FingerDice.PageModels
         bool _isRefreshing;
 
         [ObservableProperty]
-        private string _today = DateTime.Now.ToString("dddd, MMM d");
+        private string _today = GetGreeting();
+
+        private static string GetGreeting()
+        {
+            var hour = DateTime.Now.Hour;
+            return hour switch
+            {
+                >= 5 and < 12 => "Bom dia, Caralho",
+                >= 12 and < 18 => "Boa tarde, Caralho",
+                _ => "Boa noite, Disgraça"
+            };
+        }
 
         public bool HasCompletedTasks
             => Tasks?.Any(t => t.IsCompleted) ?? false;
